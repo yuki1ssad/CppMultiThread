@@ -22,9 +22,12 @@
             std::thread mytobj2(aprint2, main_obj); --> 在子线程中修改对象成员变量的值不会影响 main 函数里的   (这种情况创建子线程使用的是拷贝构造函数)
             如果想要修改能够影响，则用 std::ref()函数    --> std::thread mytobj2(aprint2, std::ref(main_obj)); (这种情况创建子线程不会进行拷贝构造，而是真正的引用)
         3.2 智能指针
-
+            std::thread mytobj3(aprint3, std::move(myp)); ---> 独占指针没有拷贝构造函数，所以用 std::move
+            main 函数中的独占指针 myp.get() 和 aprint3 中 pzn.get() 是一样的
 
     4、用成员函数指针做线程函数
+        A a4(10);
+        std::thread mytobj4(&A::thread_work, a4, 15);
 
 */
 
@@ -54,17 +57,22 @@ public:
     mutable int m_i;
     A(int a) : m_i(a) // 类型转换构造函数，将 int 转为 A 对象
     {
-        std::cout << "thread_id = " << std::this_thread::get_id() << " A::A(int a) 构造函数被执行------------" << this << std::endl;
+        std::cout << "thread_id = " << std::this_thread::get_id() << " A::A(int a) 构造函数被执行------------ this: " << this << std::endl;
     }
 
     A(const A &a) : m_i(a.m_i)
     {
-        std::cout << "thread_id = " << std::this_thread::get_id() << " A::A(const A &a) 拷贝构造函数被执行***********" << this << std::endl;
+        std::cout << "thread_id = " << std::this_thread::get_id() << " A::A(const A &a) 拷贝构造函数被执行*********** this: " << this << std::endl;
     }
 
     ~A()
     {
-        std::cout << "thread_id = " << std::this_thread::get_id() << " A::~A 析构函数被执行===========" << this << std::endl;
+        std::cout << "thread_id = " << std::this_thread::get_id() << " A::~A 析构函数被执行=========== this: " << this << std::endl;
+    }
+
+    void thread_work(int num)
+    {
+        std::cout << "sub_threadwork run " << std::this_thread::get_id() << " this: " << this << std::endl;
     }
 };
 
@@ -81,7 +89,7 @@ void aprint2(const A &pmybuf)
 
 void aprint3(std::unique_ptr<int> pzn)
 {
-    std::cout << "thread_id = " << std::this_thread::get_id() << " In aprint2, pmybuf: " << &pmybuf << " m_i = " << pmybuf.m_i << std::endl;
+    std::cout << "thread_id = " << std::this_thread::get_id() << " In aprint3, pzn: " << pzn.get() << std::endl;
 }
 
 
@@ -115,6 +123,16 @@ int main()
     std::thread mytobj2(aprint2, std::ref(main_obj));
     mytobj2.join();
 
+    std::unique_ptr<int> myp(new int(100));
+    std::cout << "thread_id = " << std::this_thread::get_id() << " In main, before, myp: " << myp.get() << std::endl;
+    std::thread mytobj3(aprint3, std::move(myp));
+    mytobj3.join();
+
+    A a4(10);
+    std::thread mytobj4(&A::thread_work, a4, 15);
+    mytobj4.join();
+
+    std::cout << "thread_id = " << std::this_thread::get_id() << " In main, after, myp: " << &myp << std::endl;
     std::cout << "thread_id = " << std::this_thread::get_id() << " In main, pmybuf: " << &main_obj << " m_i = " << main_obj.m_i << std::endl;
     std::cout << "\nmain: hhh" << std::endl;
     return 0;
