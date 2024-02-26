@@ -10,9 +10,9 @@
 
 > main_5: unique_lock 详解
 
-> main_6:
+> main_6: 单例设计模式共享数据分析、解决、call_once
 
-> main_7: 
+> main_7: condition_variable、wait、notify_one、notify_all
 
 > main_8: 
 
