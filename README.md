@@ -14,7 +14,7 @@
 
 > main_7: condition_variable、wait、notify_one、notify_all
 
-> main_8: 
+> main_8: async、future、packaged_task、promise
 
 > main_9: 
 
