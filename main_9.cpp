@@ -84,7 +84,7 @@ int main()
     // //     std::cout << "ready" << std::endl;
     // // }
     // // else if (status == std::future_status::deferred) // 如果 std::async(std::launch::deferred, mythread);
-    // // {                                                   // 着中国情况下，不会创建新的子线程，而是在主线程中对 mythread 进行调用
+    // // {                                                   // 这种情况下，不会创建新的子线程，而是在主线程中对 mythread 进行调用
     // //     std::cout << "deferred" << std::endl;
     // //     std::cout << result.get() << std::endl;
     // // }
