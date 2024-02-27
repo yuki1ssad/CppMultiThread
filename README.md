@@ -16,6 +16,6 @@
 
 > main_8: async、future、packaged_task、promise
 
-> main_9: 
+> main_9: future 其他成员函数、shared_future、atomic
 
 > main_10: 
